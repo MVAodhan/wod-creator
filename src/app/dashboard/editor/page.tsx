@@ -19,6 +19,7 @@ import { SetStateAction, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SortableItem from "@/app/components/SortableItem";
 import { Button } from "@/components/ui/button";
+import { nanoid } from "nanoid";
 
 interface Item {
   id: string;
@@ -29,28 +30,41 @@ interface Item {
 }
 
 const initialLeftItems: Item[] = [
-  { id: "1", container: "left", name: "Item 1", reps: 5, sets: 6 },
-  { id: "2", container: "left", name: "Item 2", reps: 5, sets: 6 },
-  { id: "3", container: "left", name: "Item 3", reps: 5, sets: 6 },
-  { id: "4", container: "left", name: "Item 4", reps: 5, sets: 6 },
-  { id: "5", container: "left", name: "Item 5", reps: 5, sets: 6 },
-  { id: "6", container: "left", name: "Item 6", reps: 5, sets: 6 },
-  { id: "7", container: "left", name: "Item 7", reps: 5, sets: 6 },
-  { id: "8", container: "left", name: "Item 8", reps: 5, sets: 6 },
-  { id: "9", container: "left", name: "Item 9", reps: 5, sets: 6 },
+  { id: nanoid(), container: "left", name: "Item 1", reps: 5, sets: 6 },
+  { id: nanoid(), container: "left", name: "Item 2", reps: 5, sets: 6 },
+  { id: nanoid(), container: "left", name: "Item 3", reps: 5, sets: 6 },
+  { id: nanoid(), container: "left", name: "Item 4", reps: 5, sets: 6 },
 ];
 
 export default function DndContainers() {
   const [items, setItems] = useState<Item[]>(initialLeftItems);
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const [rightItems, setRightItems] = useState<Item[]>([]);
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5, // Require 5px movement before dragging
+        delay: 250, // Add delay to distinguish from clicks
+        tolerance: 5,
+        cancel: "input, select, button", // Cancel drag for form elements
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+        cancel: "input, select, button",
+      },
+    })
+  );
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event: any) => {
+    console.log("running drag end");
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
@@ -79,7 +93,13 @@ export default function DndContainers() {
   return (
     <div className="flex flex-col ">
       <div className="w-full flex justify-end mt-2">
-        <Button>Generate</Button>
+        <Button
+          onClick={() => {
+            console.log(rightItems);
+          }}
+        >
+          Generate
+        </Button>
       </div>
       <DndContext
         sensors={sensors}
@@ -92,14 +112,14 @@ export default function DndContainers() {
             key={"left"}
             id={"left"}
             items={items.filter((item) => item.container === "left")}
-            setItems={setItems}
+            setRightItems={setRightItems}
           />
 
           <Container
             key={"right"}
             id={"right"}
             items={items.filter((item) => item.container === "right")}
-            setItems={setItems}
+            setRightItems={setRightItems}
           />
         </div>
 
@@ -119,11 +139,11 @@ export default function DndContainers() {
 function Container({
   id,
   items,
-  setItems,
+  setRightItems,
 }: {
   id: string;
   items: Item[];
-  setItems: React.Dispatch<SetStateAction<Item[]>>;
+  setRightItems: React.Dispatch<SetStateAction<Item[]>>;
 }) {
   const { setNodeRef } = useDroppable({ id });
 
@@ -133,7 +153,12 @@ function Container({
         <ScrollArea className="max-h-full w-full rounded-md p-4 h-screen ">
           <div ref={setNodeRef} className=" min-w-1/2 h-full">
             {items.map((item) => (
-              <SortableItem key={item.id} item={item} setItems={setItems} />
+              <SortableItem
+                key={item.id}
+                item={item}
+                items={initialLeftItems}
+                setItems={setRightItems}
+              />
             ))}
           </div>
         </ScrollArea>

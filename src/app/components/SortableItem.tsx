@@ -4,15 +4,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React, { SetStateAction, useRef } from "react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface Item {
   id: string;
@@ -24,9 +17,11 @@ interface Item {
 
 const SortableItem = ({
   item,
+  items,
   setItems,
 }: {
   item: Item;
+  items: Item[];
   setItems: React.Dispatch<SetStateAction<Item[]>>;
 }) => {
   const {
@@ -50,7 +45,6 @@ const SortableItem = ({
     transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    cursor: "grab",
     background: "white",
     padding: "10px",
     margin: "10px 0",
@@ -59,7 +53,7 @@ const SortableItem = ({
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style}>
       <div className="w-full flex gap-2 items-center justify-between">
         <div>{item.name}</div>
         <div className="flex items-center gap-2 ">
@@ -69,6 +63,7 @@ const SortableItem = ({
             defaultValue={item.reps}
             className="w-[60px]"
             ref={repRef}
+            disabled={item.container === "left"}
           />
         </div>
         <div className="flex items-center gap-2 ">
@@ -78,53 +73,49 @@ const SortableItem = ({
             defaultValue={item.sets}
             className="w-[60px]"
             ref={setRef}
+            disabled={item.container === "left"}
           />
         </div>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-6 h-6 text-gray-600 hover:text-gray-800 cursor-pointer"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.5 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm0 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onMouseUp={() => {
-                  setItems((prev) => [
-                    ...prev,
-                    {
-                      id: "18",
-                      container: "right",
-                      name: "Item 18",
-                      reps: 5,
-                      sets: 6,
-                    },
-                  ]);
-                }}
-              >
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onMouseUp={() => {
-                  console.log(repRef.current?.value);
-                }}
-              >
-                Save
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <Button
+          variant="outline"
+          disabled={item.container === "left"}
+          onClick={() => {
+            // console.log(item);
+            // console.log(items);
+
+            const newItem = {
+              ...item,
+              reps: Number(repRef.current?.value!),
+              sets: Number(setRef.current?.value!),
+            };
+
+            setItems((prev) => [...prev, newItem]);
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 text-gray-700 hover:text-blue-600 focus:text-blue-700 transition duration-150 ease-in-out"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true" // Hide from screen readers if it's purely decorative or has adjacent text
+            // Add role="img" and <title>Save</title> if it needs semantic meaning and has no adjacent text
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17 16v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2h2l3-3h6l3 3h2a2 2 0 012 2v3m-6-7v4m0 0H9m4 0h2"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </Button>
+        <div {...attributes} {...listeners} style={{ cursor: "grab" }}>
+          ⠿
         </div>
       </div>
     </div>
