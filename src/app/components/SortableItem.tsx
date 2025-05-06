@@ -18,10 +18,12 @@ interface Item {
 const SortableItem = ({
   item,
   items,
+  rightItems,
   setItems,
 }: {
   item: Item;
   items: Item[];
+  rightItems: Item[];
   setItems: React.Dispatch<SetStateAction<Item[]>>;
 }) => {
   const {
@@ -80,16 +82,20 @@ const SortableItem = ({
           variant="outline"
           disabled={item.container === "left"}
           onClick={() => {
+            // console.log(rightItems);
             // console.log(item);
-            // console.log(items);
-
+            // console.log(rightItems.indexOf(item));
+            const itemToChange = rightItems.slice(rightItems.indexOf(item))[0];
             const newItem = {
-              ...item,
+              ...itemToChange,
               reps: Number(repRef.current?.value!),
               sets: Number(setRef.current?.value!),
             };
+            console.log(newItem);
 
-            setItems((prev) => [...prev, newItem]);
+            setItems(
+              rightItems.toSpliced(rightItems.indexOf(item), 1, newItem)
+            );
           }}
         >
           <svg

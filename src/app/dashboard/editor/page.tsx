@@ -126,6 +126,7 @@ export default function DndContainers() {
             key={"left"}
             id={"left"}
             items={items.filter((item) => item.container === "left")}
+            rightItems={rightItems}
             setRightItems={setRightItems}
           />
 
@@ -133,6 +134,7 @@ export default function DndContainers() {
             key={"right"}
             id={"right"}
             items={items.filter((item) => item.container === "right")}
+            rightItems={rightItems}
             setRightItems={setRightItems}
           />
         </div>
@@ -153,10 +155,12 @@ export default function DndContainers() {
 function Container({
   id,
   items,
+  rightItems,
   setRightItems,
 }: {
   id: string;
   items: Item[];
+  rightItems: Item[];
   setRightItems: React.Dispatch<SetStateAction<Item[]>>;
 }) {
   const { setNodeRef } = useDroppable({ id });
@@ -171,6 +175,7 @@ function Container({
                 key={item.id}
                 item={item}
                 items={initialLeftItems}
+                rightItems={rightItems}
                 setItems={setRightItems}
               />
             ))}
