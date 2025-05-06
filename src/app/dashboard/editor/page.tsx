@@ -64,13 +64,22 @@ export default function DndContainers() {
   };
 
   const handleDragEnd = (event: any) => {
-    console.log("running drag end");
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
 
     const activeContainer = active.data.current?.container;
     const overContainer = over.data.current?.container || over.id;
+
+    if (overContainer === "right") {
+      const activeItem = items.find((item) => item.id === active.id);
+
+      const rightItemsId = rightItems.map((item) => item.id);
+
+      if (!rightItemsId.includes(activeItem?.id!)) {
+        setRightItems((prev) => [...prev, activeItem!]);
+      }
+    }
 
     setItems((items) => {
       const activeItem = items.find((item) => item.id === active.id);
@@ -95,7 +104,12 @@ export default function DndContainers() {
       <div className="w-full flex justify-end mt-2">
         <Button
           onClick={() => {
-            console.log(rightItems);
+            console.log("right items", rightItems);
+
+            console.log(
+              "items",
+              items.filter((item) => item.container === "right")
+            );
           }}
         >
           Generate
