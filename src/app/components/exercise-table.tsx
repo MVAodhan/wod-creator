@@ -10,9 +10,24 @@ import {
 } from "@/components/ui/table";
 import AddExercise from "./add-exercise";
 import { useState } from "react";
+import { pb } from "@/lib/utils";
 
 const ExerciseTable = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [saving, setSaving] = useState<boolean>(false);
+
+  const saveExercise = async () => {
+    setSaving(true);
+    for (const excercise of exercises) {
+      await pb.collection("exercises").create({
+        container: excercise.container,
+        name: excercise.name,
+        reps: excercise.reps,
+        sets: excercise.sets,
+      });
+    }
+    setSaving(false);
+  };
 
   return (
     <Table>
@@ -20,8 +35,31 @@ const ExerciseTable = () => {
         <TableRow>
           <TableHead>Exercise</TableHead>
           <TableHead>Reps</TableHead>
-          <TableHead className="flex justify-end items-center">
+          <TableHead>Sets</TableHead>
+          <TableHead className="flex gap-2 justify-end items-center">
             <AddExercise setExercises={setExercises} />
+            <Button
+              onClick={() => {
+                saveExercise();
+              }}
+              disabled={saving}
+            >
+              {saving ? (
+                <div className="flex justify-center items-center p-4">
+                  <div
+                    className="w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"
+                    role="status" // Added for accessibility
+                    aria-live="polite" // Added for accessibility
+                    aria-label="Loading" // Added for accessibility
+                  >
+                    {/* Visually hidden text for screen readers */}
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                "Save"
+              )}
+            </Button>
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -31,6 +69,7 @@ const ExerciseTable = () => {
             <TableRow key={exercise.id}>
               <TableCell className="font-medium">{exercise.name}</TableCell>
               <TableCell>{exercise.reps}</TableCell>
+              <TableCell>{exercise.sets}</TableCell>
               <TableCell className="flex justify-end items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

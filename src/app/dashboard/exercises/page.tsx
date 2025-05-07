@@ -1,3 +1,4 @@
+"use client";
 import ExerciseTable from "@/app/components/exercise-table";
 import React from "react";
 

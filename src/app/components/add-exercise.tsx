@@ -17,19 +17,22 @@ const AddExercise = ({
 }: {
   setExercises: React.Dispatch<SetStateAction<Exercise[]>>;
 }) => {
-  const addExercise = (name: string, reps: number) => {
+  const addExercise = (name: string, reps: number, sets: number) => {
     setExercises((prev) => [
       ...prev,
       {
         id: nanoid(),
+        container: "left",
         name: name,
         reps: reps,
+        sets: sets,
       },
     ]);
     setIsOpen(false);
   };
   const nameRef = useRef<HTMLInputElement | null>(null);
   const repsRef = useRef<HTMLInputElement | null>(null);
+  const setsRef = useRef<HTMLInputElement | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -75,14 +78,24 @@ const AddExercise = ({
               ref={repsRef}
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="exercise-reps">Exercise Sets</Label>
+            <Input
+              name="exercise-reps"
+              className="focus-visible:ring-0"
+              ref={setsRef}
+            />
+          </div>
           <Button
             variant="ghost"
-            onClick={() =>
+            onClick={() => {
               addExercise(
                 nameRef!.current!.value,
-                parseInt(repsRef!.current!.value)
-              )
-            }
+                parseInt(repsRef!.current!.value),
+                parseInt(setsRef!.current!.value)
+              );
+              setIsOpen(false);
+            }}
           >
             Add Exercise
           </Button>
