@@ -98,18 +98,37 @@ export default function DndContainers() {
 
     setActiveId(null);
   };
+  const reorderArray = (array1: Item[], array2: Item[]) => {
+    // Create a map for quick lookup from array1
+    const array1Map = new Map();
+    array1.forEach((item: Item) => array1Map.set(item.id, item));
+
+    // Rebuild array1 in the order of array2's IDs
+    return array2.map((item: Item) => {
+      const matchedItem = array1Map.get(item.id);
+      if (!matchedItem) {
+        console.log(`Item with ${item.id} not found in source array`);
+      }
+      return matchedItem;
+    });
+  };
 
   return (
     <div className="flex flex-col ">
       <div className="w-full flex justify-end mt-2">
         <Button
           onClick={() => {
+            const filteredItems = items.filter(
+              (item) => item.container === "right"
+            );
+
+            const orderedRightItems = reorderArray(rightItems, filteredItems);
+
             console.log("right items", rightItems);
 
-            console.log(
-              "items",
-              items.filter((item) => item.container === "right")
-            );
+            console.log("filteredItems", filteredItems);
+
+            console.log("orderedRightItems", orderedRightItems);
           }}
         >
           Generate
