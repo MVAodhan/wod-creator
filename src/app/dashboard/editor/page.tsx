@@ -15,11 +15,13 @@ import {
   rectSortingStrategy,
   SortableContext,
 } from "@dnd-kit/sortable";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SortableItem from "@/app/components/SortableItem";
 import { Button } from "@/components/ui/button";
 import { nanoid } from "nanoid";
+import { exerciseSchema, pb } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface Item {
   id: string;
@@ -37,10 +39,29 @@ const initialLeftItems: Item[] = [
 ];
 
 export default function DndContainers() {
-  const [items, setItems] = useState<Item[]>(initialLeftItems);
+  const [items, setItems] = useState<Exercise[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const [rightItems, setRightItems] = useState<Item[]>([]);
+
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  const getExercises = async () => {
+    const exercises = await pb.collection("exercises").getFullList();
+    if (exercises.length > 0) {
+      const results = exerciseSchema.safeParse(exercises);
+      if (!results.success) {
+        console.log("error", results.error);
+        return;
+      } else {
+        setItems(results.data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getExercises();
+  }, []);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -115,24 +136,39 @@ export default function DndContainers() {
 
   return (
     <div className="flex flex-col ">
-      <div className="w-full flex justify-end mt-2">
-        <Button
-          onClick={() => {
-            const filteredItems = items.filter(
-              (item) => item.container === "right"
-            );
+      <div className="w-full flex mt-2 gap-2">
+        <div className="w-1/2 flex pl-2">
+          <Input
+            ref={nameRef}
+            placeholder="Workout Name"
+            className="w-[200px]"
+          />
+        </div>
+        <div className="w-1/2 flex justify-end pr-2">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (nameRef.current && nameRef.current!.value) {
+                const filteredItems = items.filter(
+                  (item) => item.container === "right"
+                );
+                const orderedRightItems = reorderArray(
+                  rightItems,
+                  filteredItems
+                );
 
-            const orderedRightItems = reorderArray(rightItems, filteredItems);
-
-            console.log("right items", rightItems);
-
-            console.log("filteredItems", filteredItems);
-
-            console.log("orderedRightItems", orderedRightItems);
-          }}
-        >
-          Generate
-        </Button>
+                if (orderedRightItems.length > 0) {
+                  await pb.collection("workouts").create({
+                    name: nameRef.current?.value,
+                    exercises: orderedRightItems,
+                  });
+                }
+              }
+            }}
+          >
+            save
+          </Button>
+        </div>
       </div>
       <DndContext
         sensors={sensors}

@@ -10,25 +10,16 @@ import {
 } from "@/components/ui/table";
 import AddExercise from "./add-exercise";
 import { useEffect, useState } from "react";
-import { pb } from "@/lib/utils";
-import { z } from "zod";
+import { exerciseSchema, pb } from "@/lib/utils";
 
-const exerciseSchema = z.array(
-  z.object({
-    id: z.string(),
-    container: z.string(),
-    name: z.string(),
-    reps: z.number(),
-    sets: z.number(),
-  })
-);
 const ExerciseTable = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [newExercises, setNewExercises] = useState<Exercise[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
 
   const saveExercise = async () => {
     setSaving(true);
-    for (const excercise of exercises) {
+    for (const excercise of newExercises) {
       await pb.collection("exercises").create({
         container: excercise.container,
         name: excercise.name,
@@ -36,7 +27,10 @@ const ExerciseTable = () => {
         sets: excercise.sets,
       });
     }
+    setNewExercises([]);
     setSaving(false);
+    console.log("exercises", exercises);
+    console.log("new Exercises", newExercises);
   };
 
   const getExercises = async () => {
@@ -64,7 +58,10 @@ const ExerciseTable = () => {
           <TableHead>Reps</TableHead>
           <TableHead>Sets</TableHead>
           <TableHead className="flex gap-2 justify-end items-center">
-            <AddExercise setExercises={setExercises} />
+            <AddExercise
+              setExercises={setExercises}
+              setNewExercises={setNewExercises}
+            />
             <Button
               onClick={() => {
                 saveExercise();

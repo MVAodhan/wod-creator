@@ -14,20 +14,21 @@ import { SetStateAction, useRef, useState } from "react";
 
 const AddExercise = ({
   setExercises,
+  setNewExercises,
 }: {
   setExercises: React.Dispatch<SetStateAction<Exercise[]>>;
+  setNewExercises: React.Dispatch<SetStateAction<Exercise[]>>;
 }) => {
   const addExercise = (name: string, reps: number, sets: number) => {
-    setExercises((prev) => [
-      ...prev,
-      {
-        id: nanoid(),
-        container: "left",
-        name: name,
-        reps: reps,
-        sets: sets,
-      },
-    ]);
+    const newExercise = {
+      id: nanoid(),
+      container: "left",
+      name: name,
+      reps: reps,
+      sets: sets,
+    };
+    setExercises((prev) => [...prev, newExercise]);
+    setNewExercises((prev) => [...prev, newExercise]);
     setIsOpen(false);
   };
   const nameRef = useRef<HTMLInputElement | null>(null);
