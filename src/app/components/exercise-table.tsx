@@ -9,9 +9,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AddExercise from "./add-exercise";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { pb } from "@/lib/utils";
+import { z } from "zod";
 
+const exerciseSchema = z.array(
+  z.object({
+    id: z.string(),
+    container: z.string(),
+    name: z.string(),
+    reps: z.number(),
+    sets: z.number(),
+  })
+);
 const ExerciseTable = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [saving, setSaving] = useState<boolean>(false);
@@ -28,6 +38,23 @@ const ExerciseTable = () => {
     }
     setSaving(false);
   };
+
+  const getExercises = async () => {
+    const exercises = await pb.collection("exercises").getFullList();
+    if (exercises.length > 0) {
+      const results = exerciseSchema.safeParse(exercises);
+      if (!results.success) {
+        console.log("error", results.error);
+        return;
+      } else {
+        setExercises(results.data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getExercises();
+  }, []);
 
   return (
     <Table>
