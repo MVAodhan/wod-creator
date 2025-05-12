@@ -107,17 +107,15 @@ const data = {
     {
       name: "Data Library",
       url: "#",
-      icon: IconDatabase,
+      // icon: IconDatabase,
     },
     {
       name: "Reports",
       url: "#",
-      icon: IconReport,
     },
     {
       name: "Word Assistant",
       url: "#",
-      icon: IconFileWord,
     },
   ],
 };
@@ -142,7 +140,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
+        <NavDocuments items={data.documents} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

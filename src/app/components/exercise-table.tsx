@@ -11,6 +11,7 @@ import {
 import AddExercise from "./add-exercise";
 import { useEffect, useState } from "react";
 import { exerciseSchema, pb } from "@/lib/utils";
+import { Exercise } from "@/types";
 
 const ExerciseTable = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);

@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { nanoid } from "nanoid";
 import { exerciseSchema, pb } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Exercise } from "@/types";
 
 interface Item {
   id: string;
@@ -157,9 +158,9 @@ export default function DndContainers() {
                   filteredItems
                 );
 
-                if (orderedRightItems.length > 0) {
+                if (orderedRightItems.length > 0 && nameRef.current.value) {
                   await pb.collection("workouts").create({
-                    name: nameRef.current?.value,
+                    name: nameRef.current.value,
                     exercises: orderedRightItems,
                   });
                 }

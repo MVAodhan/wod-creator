@@ -1,4 +1,4 @@
-interface Exercise {
+export interface Exercise {
   id: string;
   container: string;
   name: string;
