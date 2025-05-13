@@ -5,3 +5,10 @@ export interface Exercise {
   reps: number;
   sets: number;
 }
+
+export interface Workout {
+  exercises: Exercise;
+  id: string;
+  name: string;
+  updated: string;
+}

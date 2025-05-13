@@ -17,6 +17,24 @@ export const exerciseSchema = z.array(
   })
 );
 
+export const workoutSchema = z.array(
+  z.object({
+    exercises: z.array(
+      z.object({
+        id: z.string(),
+        container: z.string(),
+        name: z.string(),
+        reps: z.number(),
+        sets: z.number(),
+      })
+    ),
+    id: z.string(),
+    name: z.string(),
+    updated: z.string(),
+  })
+);
+
+type Workout = z.infer<typeof workoutSchema>;
 const globalForPB = globalThis as unknown as { pb: PocketBase | undefined };
 
 const pb =

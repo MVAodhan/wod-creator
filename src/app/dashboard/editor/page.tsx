@@ -44,8 +44,20 @@ export default function DndContainers() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const [rightItems, setRightItems] = useState<Item[]>([]);
+  const [searchItems, setSearchItems] = useState<Item[]>([]);
 
   const nameRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const filterSearchItems = () => {
+    const searchResults = items.filter(
+      (item) =>
+        item.name.includes(`${searchRef.current?.value}`) &&
+        item.container === "left"
+    );
+
+    setSearchItems(searchResults);
+  };
 
   const getExercises = async () => {
     const exercises = await pb.collection("exercises").getFullList();
@@ -56,6 +68,7 @@ export default function DndContainers() {
         return;
       } else {
         setItems(results.data);
+        setSearchItems(results.data);
       }
     }
   };
@@ -138,14 +151,24 @@ export default function DndContainers() {
   return (
     <div className="flex flex-col ">
       <div className="w-full flex mt-2 gap-2">
-        <div className="w-1/2 flex pl-2">
-          <Input
-            ref={nameRef}
-            placeholder="Workout Name"
-            className="w-[200px]"
-          />
+        <div className="flex flex-col gap-2">
+          <div className=" flex pl-2">
+            <Input
+              ref={nameRef}
+              placeholder="Workout Name"
+              className="w-[200px]"
+            />
+          </div>
+          <div className=" flex pl-2">
+            <Input
+              ref={searchRef}
+              placeholder="Search"
+              className="w-[200px]"
+              onChange={filterSearchItems}
+            />
+          </div>
         </div>
-        <div className="w-1/2 flex justify-end pr-2">
+        <div className="w-full flex justify-end pr-2 ">
           <Button
             variant="outline"
             onClick={async () => {
@@ -181,7 +204,7 @@ export default function DndContainers() {
           <Container
             key={"left"}
             id={"left"}
-            items={items.filter((item) => item.container === "left")}
+            items={searchItems}
             rightItems={rightItems}
             setRightItems={setRightItems}
           />

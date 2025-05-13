@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   IconCamera,
   IconChartBar,
@@ -32,6 +32,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { pb, workoutSchema } from "@/lib/utils";
+import { z } from "zod";
+import { Workout } from "@/types";
 
 const data = {
   user: {
