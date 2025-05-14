@@ -56,6 +56,10 @@ const data = {
       title: "Editor",
       url: "/dashboard/editor",
     },
+    {
+      title: "Workouts",
+      url: "/dashboard/workouts",
+    },
   ],
   navClouds: [
     {
@@ -143,7 +147,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

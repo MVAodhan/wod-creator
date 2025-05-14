@@ -1,6 +1,6 @@
 "use client";
 import { pb, workoutSchema } from "@/lib/utils";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Table,
@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/table";
 import { Workout } from "@/types";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-const Page = () => {
+const Page = ({ params }: { params: Promise<{ id: string }> }) => {
   const [workouts, setWorkouts] = useState<Workout[] | null>(null);
 
   const getWorkouts = async () => {
@@ -24,29 +25,43 @@ const Page = () => {
       setWorkouts(workouts.data as unknown as Workout[]);
     }
   };
+
   useEffect(() => {
     getWorkouts();
   }, []);
 
-  console.log(workouts);
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="font-bold">Workout Name</TableHead>
-          <TableHead className="flex items-center justify-end ">
-            Last Updated
-          </TableHead>
+          <TableHead className="w-[100px]">Workout Name</TableHead>
+          <TableHead className="   border-green-500">Last Updated</TableHead>
+          <TableHead className="   border-green-500">Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="w-full">
         {workouts &&
           workouts.map((workout: Workout) => (
-            <TableRow className="w-full" key={workout.id}>
-              <TableCell className="">{workout.name}</TableCell>
+            <TableRow key={workout.id}>
+              <TableCell>{workout.name}</TableCell>
 
-              <TableCell className="flex items-center justify-end ">
-                {workout.updated.split(" ")[0]}
+              <TableCell>{workout.updated.split(" ")[0]}</TableCell>
+              <TableCell>
+                <Link href={`/dashboard/viewer/${workout.id}`}>
+                  <Button variant="outline">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24m0 192a88 88 0 1 1 88-88a88.1 88.1 0 0 1-88 88m45.66-93.66a8 8 0 0 1 0 11.32l-32 32a8 8 0 0 1-11.32-11.32L148.69 136H88a8 8 0 0 1 0-16h60.69l-18.35-18.34a8 8 0 0 1 11.32-11.32Z"
+                      />
+                    </svg>
+                  </Button>
+                </Link>
               </TableCell>
             </TableRow>
           ))}
