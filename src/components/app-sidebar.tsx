@@ -1,27 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconFolder,
-  IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -32,9 +18,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { pb, workoutSchema } from "@/lib/utils";
-import { z } from "zod";
-import { Workout } from "@/types";
 
 const data = {
   user: {
@@ -44,21 +27,17 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "/dashboard",
+      title: "Workouts",
+      url: "/workouts",
       // icon: IconDashboard,
     },
     {
       title: "Exercises",
-      url: "/dashboard/exercises",
+      url: "/workouts/exercises",
     },
     {
       title: "Editor",
-      url: "/dashboard/editor",
-    },
-    {
-      title: "Workouts",
-      url: "/dashboard/workouts",
+      url: "/workouts/editor",
     },
   ],
   navClouds: [

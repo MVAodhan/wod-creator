@@ -24,7 +24,7 @@ const MyDocument = ({ exercises }: { exercises: Exercise[] }) => (
         }}
       >
         {exercises.map((exercise: Exercise) => (
-          <View style={{ flexDirection: "row", gap: "50px" }}>
+          <View style={{ flexDirection: "row", gap: "50px" }} key={exercise.id}>
             <Text style={{ width: "33%" }}>{exercise.name}</Text>
             <Text style={{ width: "33%" }}>{exercise.reps}</Text>
             <Text style={{ width: "33%" }}>{exercise.sets}</Text>
@@ -61,11 +61,12 @@ const Viewer = ({ params }: { params: Promise<{ id: string }> }) => {
     getWorkout(ID!);
   }, [ID]);
 
+  console.log(workout?.exercises);
   return (
     <div className="w-full h-full">
       {workout ? (
         <PDFViewer style={{ height: "100%", width: "100%" }}>
-          <MyDocument exercises={workout.exercises} />
+          <MyDocument exercises={workout.exercises as unknown as Exercise[]} />
         </PDFViewer>
       ) : (
         <>No Data</>

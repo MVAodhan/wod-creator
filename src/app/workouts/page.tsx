@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -15,7 +14,7 @@ import { Workout } from "@/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const Page = ({ params }: { params: Promise<{ id: string }> }) => {
+const Page = () => {
   const [workouts, setWorkouts] = useState<Workout[] | null>(null);
 
   const getWorkouts = async () => {
@@ -24,6 +23,9 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
     if (workouts.success) {
       setWorkouts(workouts.data as unknown as Workout[]);
     }
+
+    const user = await pb.authStore.record;
+    console.log(user);
   };
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
 
               <TableCell>{workout.updated.split(" ")[0]}</TableCell>
               <TableCell>
-                <Link href={`/dashboard/viewer/${workout.id}`}>
+                <Link href={`/workouts/viewer/${workout.id}`}>
                   <Button variant="outline">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
